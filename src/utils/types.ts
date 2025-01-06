@@ -23,3 +23,35 @@ export type PaginationProp = {
   handleChange: (params: number) => void;
   pageCount: number;
 };
+
+export type ProductFilterItemProps = {
+  type: "radio" | "checkbox";
+  searchEnabled?: boolean;
+  value: string | string[];
+  label: string;
+  options: Option[];
+  onChange: (selectedValues: string | string[]) => void;
+};
+
+export type ProductFilterDrawerProps = {
+  filters: { [key: string]: string | string[] };
+  onFilterChange: (key: string, value: string | string[]) => void;
+  parameters: FilterParametersType;
+};
+
+export type ProductFiltersProps = {
+  onApplyFilters: (filters: { [key: string]: string | any }) => void;
+  parameters: FilterParametersType;
+};
+
+type Option = {
+  label: string;
+  value: string;
+};
+
+export type FilterParametersType = {
+  searchTerm: string;
+  brands: Option[];
+  models: Option[];
+  sortBy: Option[];
+};

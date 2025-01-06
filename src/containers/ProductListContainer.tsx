@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { ProductType } from "../utils/types";
+import { FilterParametersType, ProductType } from "../utils/types";
 import { getProducts } from "../api/getProducts";
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
+import ProductFilters from "../components/ProductFilters";
 
 const ProductListContainer: React.FC = () => {
   const itemsPerPage = 12;
@@ -15,6 +16,43 @@ const ProductListContainer: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [numberOfPage, setNumberOfPage] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [parameters, setParameters] = useState<FilterParametersType>({
+    searchTerm: searchTerm,
+    brands: [],
+    models: [],
+    sortBy: [
+      { label: "Price High To Low", value: "price_inc" },
+      { label: "Price Low To High", value: "price_dec" },
+      { label: "Old To New", value: "to_new" },
+      { label: "New To Old", value: "to_old" },
+    ],
+  });
+
+  const filterParameters = () => {
+    const brands = Array.from(
+      new Set(filteredProducts.map((item) => item.brand))
+    ).map((brand) => ({
+      label: brand,
+      value: brand,
+    }));
+
+    const models = Array.from(
+      new Set(filteredProducts.map((item) => item.model))
+    ).map((model) => ({
+      label: model,
+      value: model,
+    }));
+    setParameters({ ...parameters, brands: brands, models: models });
+  };
+
+  useEffect(() => {
+    filterParameters();
+  }, [searchTerm]);
+
+  useEffect(() => {
+    filterParameters();
+  }, [productList]);
 
   useEffect(() => {
     const indexOfLastItem = (currentPage + 1) * itemsPerPage;
@@ -33,7 +71,8 @@ const ProductListContainer: React.FC = () => {
         const data = await getProducts();
         setProductList(data);
         setFilteredProducts(data);
-        console.log(currentShowedProducts);
+        filterParameters();
+        console.log(data);
       } catch (error) {
         setError("Error fetching products!");
       } finally {
@@ -52,18 +91,82 @@ const ProductListContainer: React.FC = () => {
     setCurrentPage(selected);
   };
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {currentShowedProducts.map((product) => {
-        return (
-          <div key={product.id}>
-            <ProductCard product={product} />
-          </div>
-        );
-      })}
+  const sortByPriceDec = (products: ProductType[]) => {
+    const sortedItems = [...products].sort((a, b) => a.price - b.price);
+    return sortedItems;
+  };
 
+  const sortByPriceInc = (products: ProductType[]) => {
+    const sortedItems = [...products].sort((a, b) => b.price - a.price);
+    return sortedItems;
+  };
+
+  const sortByNewest = (products: ProductType[]) => {
+    const sortedItems = [...products].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    return sortedItems;
+  };
+
+  const sortByOldest = (products: ProductType[]) => {
+    const sortedItems = [...products].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    return sortedItems;
+  };
+
+  const sortProducts: Record<string, (params: ProductType[]) => ProductType[]> =
+    {
+      price_inc: sortByPriceInc,
+      price_dec: sortByPriceDec,
+      to_new: sortByOldest,
+      to_old: sortByNewest,
+    };
+
+  const handleApplyFilters = (filters: string | any) => {
+    const filtered = productList.filter((product) => {
+      if (
+        searchTerm.length > 0 &&
+        !product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+        return false;
+      if (filters.model.length > 0 && !filters.model.includes(product.model))
+        return false;
+      if (filters.brand.length > 0 && !filters.brand.includes(product.brand))
+        return false;
+      return true;
+    });
+
+    if (filters.sortBy) {
+      const sortFunction = sortProducts[filters.sortBy];
+      const sortedProducts = sortFunction(filtered);
+      setFilteredProducts(sortedProducts);
+    } else {
+      setFilteredProducts(filtered);
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <ProductFilters
+          onApplyFilters={handleApplyFilters}
+          parameters={parameters}
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {currentShowedProducts.map((product) => {
+          return (
+            <div key={product.id}>
+              <ProductCard product={product} />
+            </div>
+          );
+        })}
+      </div>
       <Pagination handleChange={handlePageChange} pageCount={numberOfPage} />
-    </div>
+    </>
   );
 };
 

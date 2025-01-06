@@ -3,16 +3,16 @@ import { PaginationProp } from "../utils/types";
 
 const Pagination: React.FC<PaginationProp> = ({ handleChange, pageCount }) => {
   return (
-    <div className="pagination-container">
+    <div className="my-8">
       <ReactPaginate
-        className="pagination"
+        className="flex gap-5 justify-center items-center"
         disabledClassName="disabled"
         previousLabel="Prev"
-        previousClassName="btn"
+        previousClassName="hover:text-black-100"
         nextClassName="btn"
-        pageClassName="page-item"
+        pageClassName="font-light px-2 py-1"
         pageLinkClassName="page-link"
-        activeClassName="active-page"
+        activeClassName="bg-white shadow-md rounded text-blue"
         pageCount={pageCount}
         onPageChange={(data) => {
           handleChange(data.selected);
