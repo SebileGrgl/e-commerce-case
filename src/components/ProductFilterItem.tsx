@@ -36,31 +36,39 @@ const ProductFilterItem: React.FC<ProductFilterItemProps> = ({
   );
 
   return (
-    <div className="filter">
-      {label}
-      {searchEnabled && (
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-      )}
-      {filteredOptions.map((option) => (
-        <label key={option.value}>
+    <div>
+      <p className="font-thin text-sm mb-2">{label}</p>
+      <div className="bg-white shadow-md p-5  h-48 overflow-y-auto rounded">
+        {searchEnabled && (
           <input
-            type={type}
-            value={option.value}
-            checked={
-              type === "radio"
-                ? selectedValues === option.value
-                : (selectedValues as string[]).includes(option.value)
-            }
-            onChange={() => handleChange(option.value)}
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="bg-gray-100 rounded p-1 mb-4"
           />
-          {option.label}
-        </label>
-      ))}
+        )}
+        <div className="flex flex-col gap-1">
+          {filteredOptions.map((option) => (
+            <label
+              key={option.value}
+              className="flex items-center gap-2 font-light"
+            >
+              <input
+                type={type}
+                value={option.value}
+                checked={
+                  type === "radio"
+                    ? selectedValues === option.value
+                    : (selectedValues as string[]).includes(option.value)
+                }
+                onChange={() => handleChange(option.value)}
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

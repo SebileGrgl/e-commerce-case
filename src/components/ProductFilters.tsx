@@ -21,13 +21,18 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   };
 
   return (
-    <div>
+    <div className="flex-1">
       <ProductFilterDrawer
         filters={filters}
         onFilterChange={handleFilterChange}
         parameters={parameters}
       />
-      <button onClick={handleApplyFilters}>Filtreleri Uygula</button>
+      <button
+        className="w-full bg-blue text-white rounded p-2 mt-7"
+        onClick={handleApplyFilters}
+      >
+        Apply Filters
+      </button>
     </div>
   );
 };

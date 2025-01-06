@@ -1,7 +1,6 @@
 import { ProductCardProp } from "../utils/types";
-import AddToCartBtn from "./AddToCartBtn";
 
-const ProductCard: React.FC<ProductCardProp> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProp> = ({ product, handleClick }) => {
   return (
     <div className="flex justify-center items-center flex-col bg-white p-4 shadow-md rounded">
       <img
@@ -11,7 +10,14 @@ const ProductCard: React.FC<ProductCardProp> = ({ product }) => {
       />
       <p className="w-full text-start mt-4 text-blue">{product.price} $</p>
       <p className="w-full text-start my-4">{product.name}</p>
-      <AddToCartBtn />
+      <button
+        onClick={() => {
+          handleClick(product);
+        }}
+        className="w-full bg-blue p-2 rounded text-white"
+      >
+        Add To Cart
+      </button>
     </div>
   );
 };

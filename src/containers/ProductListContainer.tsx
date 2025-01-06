@@ -4,6 +4,7 @@ import { getProducts } from "../api/getProducts";
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
 import ProductFilters from "../components/ProductFilters";
+import { useCart } from "../hooks/useCart";
 
 const ProductListContainer: React.FC = () => {
   const itemsPerPage = 12;
@@ -29,6 +30,8 @@ const ProductListContainer: React.FC = () => {
     ],
   });
 
+  const { addToCart } = useCart();
+
   const filterParameters = () => {
     const brands = Array.from(
       new Set(filteredProducts.map((item) => item.brand))
@@ -48,11 +51,7 @@ const ProductListContainer: React.FC = () => {
 
   useEffect(() => {
     filterParameters();
-  }, [searchTerm]);
-
-  useEffect(() => {
-    filterParameters();
-  }, [productList]);
+  }, [searchTerm, productList]);
 
   useEffect(() => {
     const indexOfLastItem = (currentPage + 1) * itemsPerPage;
@@ -148,24 +147,36 @@ const ProductListContainer: React.FC = () => {
     }
   };
 
+  const handleAddCart = (product: ProductType) => {
+    addToCart(product);
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
   return (
     <>
-      <div>
+      <div className="container mx-auto flex flex-row gap-10 ">
         <ProductFilters
           onApplyFilters={handleApplyFilters}
           parameters={parameters}
         />
+
+        <div className="flex-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {currentShowedProducts.map((product) => {
+              return (
+                <div key={product.id}>
+                  <ProductCard product={product} handleClick={handleAddCart} />
+                </div>
+              );
+            })}
+          </div>
+          <Pagination
+            handleChange={handlePageChange}
+            pageCount={numberOfPage}
+          />
+        </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {currentShowedProducts.map((product) => {
-          return (
-            <div key={product.id}>
-              <ProductCard product={product} />
-            </div>
-          );
-        })}
-      </div>
-      <Pagination handleChange={handlePageChange} pageCount={numberOfPage} />
     </>
   );
 };

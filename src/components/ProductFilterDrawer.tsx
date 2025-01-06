@@ -8,8 +8,7 @@ const ProductFilterDrawer: React.FC<ProductFilterDrawerProps> = ({
   parameters,
 }) => {
   return (
-    <div className="filter-drawer">
-      <h2>Filtreler</h2>
+    <div className="flex flex-col gap-7">
       <ProductFilterItem
         type="radio"
         searchEnabled={false}

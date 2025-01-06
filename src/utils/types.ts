@@ -17,6 +17,7 @@ export type ProductListProps = {
 
 export type ProductCardProp = {
   product: ProductType;
+  handleClick: (params: ProductType) => void;
 };
 
 export type PaginationProp = {
@@ -54,4 +55,18 @@ export type FilterParametersType = {
   brands: Option[];
   models: Option[];
   sortBy: Option[];
+};
+
+export type CartItem = ProductType & {
+  quantity: number;
+};
+
+export type CartContextType = {
+  cart: CartItem[];
+  addToCart: (product: ProductType) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
+  clearCart: () => void;
+  totalPrice: number;
+  itemCount: number;
 };
