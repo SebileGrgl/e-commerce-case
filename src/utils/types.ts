@@ -62,11 +62,16 @@ export type CartItem = ProductType & {
 };
 
 export type CartContextType = {
-  cart: CartItem[];
+  cartItems: CartItem[];
   addToCart: (product: ProductType) => void;
   removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  increaseQuantity: (productId: string) => void;
+  decreaseQuantity: (productId: string) => void;
   clearCart: () => void;
   totalPrice: number;
   itemCount: number;
+};
+
+export type CartItemProps = {
+  cartItem: CartItem;
 };

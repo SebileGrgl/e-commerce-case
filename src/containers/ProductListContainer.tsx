@@ -155,7 +155,7 @@ const ProductListContainer: React.FC = () => {
   if (error) return <p>{error}</p>;
   return (
     <>
-      <div className="container mx-auto flex flex-row gap-10 ">
+      <div className="mx-auto flex flex-row gap-10 ">
         <ProductFilters
           onApplyFilters={handleApplyFilters}
           parameters={parameters}
